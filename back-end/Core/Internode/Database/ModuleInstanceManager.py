@@ -27,7 +27,12 @@ class DatabaseInstanceCreator: # Pymysql Instance Creation System #
         # Connect To DB #
         self.DBUsername = str(DatabaseConfig.get('DatabaseUsername'))
         self.DBPassword = str(DatabaseConfig.get('DatabasePassword'))
-        self.DBHost = str(DatabaseConfig.get('DatabaseHost'))
+        DBHost = str(DatabaseConfig.get('DatabaseHost'))
+        self.DBHost = DBHost.split(':')[0]
+        if len(DBHost.split(':')) == 2:
+            self.DBPort = int(DBHost.split(':')[1])
+        else:
+            self.DBPort = None
         self.DBDatabaseName = str(DatabaseConfig.get('DatabaseName'))
 
 
@@ -63,7 +68,15 @@ class DatabaseInstanceCreator: # Pymysql Instance Creation System #
 
                     # Create Pymysql Instance For Thread #
                     Threads.append(threading.Thread.getName (ExistingThread))
-                    ExistingThread.PymysqlInstance = pymysql.connect(host = self.DBHost, user = self.DBUsername, password = self.DBPassword, db = self.DBDatabaseName)
+                    ConnectArgs = {
+                        'host': self.DBHost,
+                        'user': self.DBUsername,
+                        'password': self.DBPassword,
+                        'db': self.DBDatabaseName
+                    }
+                    if self.DBPort is not None:
+                        ConnectArgs['port'] = self.DBPort
+                    ExistingThread.PymysqlInstance = pymysql.connect(**ConnectArgs)
 
                     # Log Instance Creation #
                     self.Logger.Log("Database Instance Created for thread " + threading.Thread.getName (ExistingThread), 3)
