@@ -91,7 +91,7 @@ def CanAccessDatabase(DatabaseConfig:dict, Logger): # Runs Some Diagnostics Abou
         Logger.Log('System Reachable, Advancing To Next Test', 1)
 
     # Check If Port In Allowed Range #
-    if Port != None:
+    if Port is not None:
         Logger.Log('Checking If Port In Allowed Range (0-65535)', 1)
         if not ((int(Port) > 0) and (int(Port) < 65536)):
             Logger.Log('Port Outside Allwed Range, Please Check Configuration File')
@@ -99,7 +99,7 @@ def CanAccessDatabase(DatabaseConfig:dict, Logger): # Runs Some Diagnostics Abou
         Logger.Log('Port Within Valid Range, Advancing To Next Test')
 
     # Check If Host Has Port Open #
-    if Port != None:
+    if Port is not None:
         Logger.Log('Checking If Remote Host Has Port Open')
         if not IsPortOpen(Address, Port):
             Logger.Log(f'Address {Address} Does Not Have Port {Port} Open, Check Configuration Or Database Service!', 3)
@@ -110,7 +110,15 @@ def CanAccessDatabase(DatabaseConfig:dict, Logger): # Runs Some Diagnostics Abou
     # Attempt Database Connection #
     Logger.Log('Attempting Database Connection')
     try:
-        pymysql.connect(host=Host, user=Username, password=Password, db=Database)
+        ConnectArgs = {
+            'host': Address,
+            'user': Username,
+            'password': Password,
+            'db': Database
+        }
+        if Port is not None:
+            ConnectArgs['port'] = int(Port)
+        pymysql.connect(**ConnectArgs)
     except Exception as E:
         Logger.Log('A Fatal Error Has Been Asserted, Please See Line Below For More Information:', 3)
         Logger.Log(E, 3)
