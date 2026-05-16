@@ -179,22 +179,29 @@ class SocketClient(): # Creates A Client Socket System #
                 db = DBDatabaseName
         )
 
-        cur = self.DatabaseConnection.cursor(pymysql.cursors.DictCursor)
+        try:
+            cur = self.DatabaseConnection.cursor(pymysql.cursors.DictCursor)
 
-        cur.execute("SELECT * FROM user WHERE userName=%s AND passwordHash=%s",(userName,passwordHash))
-        userCursor = cur
+            matchedUserCount = cur.execute(
+                "SELECT * FROM user WHERE userName=%s AND passwordHash=%s",
+                (userName,passwordHash)
+            )
+            if matchedUserCount == 0:
+                return False
 
-        for row in userCursor:
-            level = row['permissionLevel']
-            cur.execute("SELECT * FROM command WHERE permissionLevel=%s",level)
+            userRows = list(cur)
+            for row in userRows:
+                level = row['permissionLevel']
+                cur.execute("SELECT * FROM command WHERE permissionLevel=%s",(level,))
 
-            print("Executable Commands for current permission level:")
-            for row1 in cur:
-                print(row1['commandName'],"\t",row1['commandDescription'])
+                print("Executable Commands for current permission level:")
+                for row1 in cur:
+                    print(row1['commandName'],"\t",row1['commandDescription'])
 
-        self.DatabaseConnection.close()
-        
-        return True
+            return True
+
+        finally:
+            self.DatabaseConnection.close()
 
     def addUser(self, userName:str, passwordHash:str, salt:str, firstName:str, lastName:str, notes:str, permissionLevel:int):
 
