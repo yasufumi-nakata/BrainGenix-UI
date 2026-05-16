@@ -45,6 +45,7 @@ class ThreadManager(): # This Class Manages Threads #
 
         # Create Local Var #
         self.ThreadsDestroyed = False
+        self.ThreadJoinTimeoutSeconds = 5.0
 
         # Register Exit Function #
         atexit.register(self.ShutdownSystem)
@@ -244,12 +245,20 @@ class ThreadManager(): # This Class Manages Threads #
             # Merge Threads #
             self.Logger.Log('Joining Threads', 2)
             for ThreadIndex in range(len(self.Threads)):
+                Thread = self.Threads[ThreadIndex]
+                ThreadName = getattr(Thread, 'name', f'Thread {ThreadIndex + 1}')
 
                 # Log Join Init #
                 self.Logger.Log(f'Joining Thread {ThreadIndex + 1}/{len(self.Threads)}', 0)
 
                 # Join Thread #
-                self.Threads[ThreadIndex].join()
+                Thread.join(timeout=self.ThreadJoinTimeoutSeconds)
+                if Thread.is_alive():
+                    TimeoutMessage = (
+                        f'Thread {ThreadIndex + 1} ({ThreadName}) did not stop within '
+                        f'{self.ThreadJoinTimeoutSeconds} seconds')
+                    self.Logger.Log(TimeoutMessage, 3)
+                    continue
 
                 # Log Join Completion #
                 self.Logger.Log(f'Joined Thread {ThreadIndex + 1}', 0)
