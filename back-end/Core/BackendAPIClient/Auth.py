@@ -45,9 +45,10 @@ class AuthenticationManager(): # Handles Auth for API #
         try:
             # AssociatedUsername = self.Tokens[Token]['Username']
             TokenExpireDate = self.Tokens[Token]['ExpireTime']
+            TokenExpires = self.Tokens[Token].get('TokenExpires', True)
 
             # Check If Token Expired #
-            if time.time() > TokenExpireDate:
+            if TokenExpires and time.time() > TokenExpireDate:
                 Response = 'Expired Token'
 
             # Valid Token #
