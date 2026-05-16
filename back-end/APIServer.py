@@ -41,8 +41,14 @@ SystemConfiguration = LoadLocalConfig(ConfigFilePath = 'Config.yaml')
 # Start Uvicorn #
 if __name__ == '__main__':
 
-    if os.path.exists("/home/BrainGenix-UI/back-end/.gitsecret/key.pem")==False and os.path.exists("/home/BrainGenix-UI/back-end/.gitsecret/cert.pem")==False:
-        subprocess.call(['sh', './install.sh'])
+    BackendDirectory = os.path.dirname(os.path.abspath(__file__))
+    SecretDirectory = os.path.join(BackendDirectory, '.gitsecret')
+    InstallScript = os.path.join(BackendDirectory, 'install.sh')
+    SSLKeyFile = os.path.join(SecretDirectory, 'key.pem')
+    SSLCertFile = os.path.join(SecretDirectory, 'cert.pem')
+
+    if not (os.path.exists(SSLKeyFile) and os.path.exists(SSLCertFile)):
+        subprocess.call(['sh', InstallScript], cwd=BackendDirectory)  # nosec B603 - fixed repo-local script path
     
     try: 
 
@@ -53,8 +59,8 @@ if __name__ == '__main__':
             host=SystemConfiguration['APIServerAddress'],
             port=SystemConfiguration['APIServerPort'],
             log_level="info",
-            ssl_keyfile=".gitsecret/key.pem",
-            ssl_certfile=".gitsecret/cert.pem"
+            ssl_keyfile=SSLKeyFile,
+            ssl_certfile=SSLCertFile
         )
 
     except Exception as e:
