@@ -15,14 +15,12 @@ class DatabaseLogTransmissionSystem(): # Transmits Logs From The Logger To The D
 
     def __init__(self, Logger:object, LogBufferQueue:object, ControlQueue:object, SystemConfiguration:dict): # Init #
 
-        # TODO: Make this part of parameters
-        self.OpsBeforeCommit = 64 # Count of DB operations to be executed before committing #
-
         # Init Logger #
         self.Logger = Logger
         self.LogBufferQueue = LogBufferQueue
         self.ControlQueue = ControlQueue
         self.Logger.Log('Initializing Database Log Transmission System', 4)
+        self.OpsBeforeCommit = self.ConfigureOpsBeforeCommit(SystemConfiguration) # Count of DB operations to be executed before committing #
 
         # TODO: Wrap further initialization in try/except; log errors in case there are any
         # Connect To DB #
@@ -42,6 +40,24 @@ class DatabaseLogTransmissionSystem(): # Transmits Logs From The Logger To The D
         # Create Database Cursor #
         self.LoggerCursor = self.DatabaseConnection.cursor()
         # TODO: (maybe) log successful initialization
+
+
+    def ConfigureOpsBeforeCommit(self, SystemConfiguration:dict): # Load DB commit batch size from config #
+
+        DefaultOpsBeforeCommit = 64
+        ConfiguredOpsBeforeCommit = SystemConfiguration.get('DatabaseLogCommitBatchSize', DefaultOpsBeforeCommit)
+
+        try:
+            OpsBeforeCommit = int(ConfiguredOpsBeforeCommit)
+        except (TypeError, ValueError):
+            self.Logger.Log('Invalid DatabaseLogCommitBatchSize; using default value of ' + str(DefaultOpsBeforeCommit), 8)
+            return DefaultOpsBeforeCommit
+
+        if OpsBeforeCommit < 1:
+            self.Logger.Log('DatabaseLogCommitBatchSize must be at least 1; using 1', 8)
+            return 1
+
+        return OpsBeforeCommit
 
 
     def ShouldStop(self): # Check If Thread Should Exit #

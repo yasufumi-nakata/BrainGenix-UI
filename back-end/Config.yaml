@@ -3,6 +3,7 @@ DatabaseUsername: bgUser
 DatabasePassword: 123456
 DatabaseHost: 10.1.18.5
 DatabaseName: bgdb
+DatabaseLogCommitBatchSize: 64 # Count of DB log operations to batch before committing
 
 # Set Socket Params Here #
 SocketBindAddress: 0.0.0.0 # Bind To All Addresses By Default
@@ -72,4 +73,3 @@ ZKPort: 2181
 
 APIServerAddress: 0.0.0.0 # Set the IP Address Used By The HTTPS Side Of The API Server
 APIServerPort: 2002 # Set The Port Used By The HTTPS Side Of The API Server
-
