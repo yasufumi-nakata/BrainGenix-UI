@@ -224,14 +224,14 @@ class Follower(): # This Class Gets System Information And Puts It Into Kafka #
         self.SystemHardware.update({'CPUInfoVersion' : CPUInfo.get('cpuinfo_version_string')})
         self.SystemHardware.update({'CPUArchitecture' : CPUInfo.get('arch')})
         self.SystemHardware.update({'CPUBits' : CPUInfo.get('bits')})
-        self.SystemHardware.update({'CPUThreads' : CPUInfo.get('count})')})
+        self.SystemHardware.update({'CPUThreads' : CPUInfo.get('count', psutil.cpu_count(logical=True))})
         self.SystemHardware.update({'CPUCores' : psutil.cpu_count(logical=False)})
         self.SystemHardware.update({'CPUVendor' : CPUInfo.get('vendor_id_raw')})
         self.SystemHardware.update({'CPUName' : CPUInfo.get('brand_raw')})
-        self.SystemHardware.update({'CPUBaseClock' : CPUInfo.get('hz_advertized_friendly')})
+        self.SystemHardware.update({'CPUBaseClock' : CPUInfo.get('hz_advertised_friendly', CPUInfo.get('hz_advertized_friendly'))})
         self.SystemHardware.update({'CPUInstructionSet' : CPUInfo.get('flags')})
         self.SystemHardware.update({'CPUL3CacheSize' : CPUInfo.get('l3_cache_size')})
-        self.SystemHardware.update({'CPUL2CacheSize' : CPUInfo.get('l2_cache_Size')})
+        self.SystemHardware.update({'CPUL2CacheSize' : CPUInfo.get('l2_cache_size', CPUInfo.get('l2_cache_Size'))})
         self.SystemHardware.update({'CPUL1CacheSize' : CPUInfo.get('l1_cache_size')})
 
 
@@ -528,5 +528,4 @@ class Leader(): # This Class Is Run By The Leader #
 
         # Set Info Ready To True #
         self.InfoReady = True
-
 
