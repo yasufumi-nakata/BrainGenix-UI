@@ -4,6 +4,7 @@
 
 import requests
 import readline # Needed for bash-style arrow key interface to input call; DO NOT DELETE THIS #
+from urllib.parse import urlparse
 
 # from requests.sessions import Request
 
@@ -21,6 +22,16 @@ Date-Created: 2021-01-19
 # implement other useful cli functionallity                      #
 # perhaps autofil params such as ls's Path={data}?               #
 ##################################################################
+
+
+
+def DisplayHostname(Host):
+    ParsedHost = urlparse(Host)
+    if ParsedHost.netloc:
+        return ParsedHost.netloc
+
+    ParsedHost = urlparse(f'//{Host}')
+    return ParsedHost.netloc or Host
 
 
 
@@ -42,7 +53,7 @@ class Client(): # Client For BrainGenix System #
         # Set Local Pointer #
         self.Host = Host
         self.EndChar = '#'
-        self.Hostname = Host.strip('http://').strip('https://')
+        self.Hostname = DisplayHostname(Host)
         self.Username = Username
 
         # Set Config Parameters #
@@ -119,6 +130,10 @@ class Client(): # Client For BrainGenix System #
         return RequestObject.json()
 
 
-# Instantiate The Client #
-CLI = Client('http://localhost:2001', Username='Parzival', Password='Riddle')
-CLI.Main()
+def main():
+    CLI = Client('http://localhost:2001', Username='Parzival', Password='Riddle')
+    CLI.Main()
+
+
+if __name__ == '__main__':
+    main()
