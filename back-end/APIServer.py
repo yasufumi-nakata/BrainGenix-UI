@@ -199,13 +199,20 @@ async def Authentication(RequestJSON: Request):
 
         # Decode Incoming JSON #
         RequestBytes = await RequestJSON.body()
-        CommandScope = json.loads(RequestBytes.decode())
+        try:
+            CommandScope = json.loads(RequestBytes.decode())
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            return {'Error' : 'Invalid Authentication Request'}
+        if not isinstance(CommandScope, dict):
+            return {'Error' : 'Invalid Authentication Request'}
 
         print(CommandScope)
 
         # Get Uname, Passwd #
-        Username = CommandScope['Username']
-        Password = CommandScope['Password']
+        Username = CommandScope.get('Username')
+        Password = CommandScope.get('Password')
+        if not isinstance(Username, str) or not isinstance(Password, str):
+            return {'Error' : 'Invalid Authentication Request'}
 
         # Check Uname, Passwd #
         if sNESSocketConnection.WriteAuthentication(Username,Password):
