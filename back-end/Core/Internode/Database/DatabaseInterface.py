@@ -101,7 +101,7 @@ class DBInterface(): # Interface to MySQL database #
     def CheckIfStringClean(self, String): # Checks If A String Is Clean (SQL INJECTION DETECTION) #
 
         # Perform The Check Against The Prohibited Strings List #
-        for Character in self.Prohibited:
+        for Character in self.ProhibitedChars:
             if Character in String:
                 self.Logger.Log(f'Potential MYSQL Injection Attack Detected: "{String}"', 4)
 
