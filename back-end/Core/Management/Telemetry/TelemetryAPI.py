@@ -282,7 +282,7 @@ class TelemetryAPI(): # Exposes Telemetry Functions To The Leader #
 
         # Get The Info #
         NodeJSON = self.LeaderAttributes.Info[NodeName]
-        Info = NodeJSON['PartitonFree']
+        Info = NodeJSON['PartitionFree']
 
         # Return The Information #
         return Info
