@@ -129,6 +129,9 @@ let currentFetch = {};
 let fetchInt;
 let fetchRate = 1000;
 const totalAv = function(arr) {
+    if (!arr.length) {
+        return '0.00';
+    }
     let total = 0;
     arr.forEach(item => {
         total += item;
