@@ -75,7 +75,12 @@ def CanAccessDatabase(DatabaseConfig:dict, Logger): # Runs Some Diagnostics Abou
     # Check If Address Valid Numbers #
     Logger.Log('Checking If Address Has Valid Numbers In Octets', 1)
     for Octet in Octets:
-        if (int(Octet) > 255) or (int(Octet) < 0):
+        try:
+            OctetNumber = int(Octet)
+        except ValueError:
+            Logger.Log('Invalid Non-Numeric Database Host Address Octet! Check Configuration File.', 3)
+            return False
+        if (OctetNumber > 255) or (OctetNumber < 0):
             Logger.Log('Invalid Number In Database Host Address Octet! Check Configuration File.', 3)
             return False
     Logger.Log('Octets Valid, Advancing To Next Test', 1)
@@ -89,6 +94,14 @@ def CanAccessDatabase(DatabaseConfig:dict, Logger): # Runs Some Diagnostics Abou
         return False
     else:
         Logger.Log('System Reachable, Advancing To Next Test', 1)
+
+    # Check If Port Is Numeric #
+    if Port != None:
+        try:
+            int(Port)
+        except ValueError:
+            Logger.Log('Invalid Non-Numeric Database Port! Check Configuration File.', 3)
+            return False
 
     # Check If Port In Allowed Range #
     if Port != None:
