@@ -22,24 +22,28 @@ class DatabaseLogTransmissionSystem(): # Transmits Logs From The Logger To The D
         self.Logger.Log('Initializing Database Log Transmission System', 4)
         self.OpsBeforeCommit = self.ConfigureOpsBeforeCommit(SystemConfiguration) # Count of DB operations to be executed before committing #
 
-        # TODO: Wrap further initialization in try/except; log errors in case there are any
-        # Connect To DB #
-        DBUsername = str(SystemConfiguration.get('DatabaseUsername'))
-        DBPassword = str(SystemConfiguration.get('DatabasePassword'))
-        DBHost = str(SystemConfiguration.get('DatabaseHost'))
-        DBDatabaseName = str(SystemConfiguration.get('DatabaseName'))
+        try:
+            # Connect To DB #
+            DBUsername = str(SystemConfiguration.get('DatabaseUsername'))
+            DBPassword = str(SystemConfiguration.get('DatabasePassword'))
+            DBHost = str(SystemConfiguration.get('DatabaseHost'))
+            DBDatabaseName = str(SystemConfiguration.get('DatabaseName'))
 
-        # Connect To Database #
-        self.DatabaseConnection = pymysql.connect(
-            host = DBHost,
-            user = DBUsername,
-            password = DBPassword,
-            db = DBDatabaseName
-        )
+            # Connect To Database #
+            self.DatabaseConnection = pymysql.connect(
+                host = DBHost,
+                user = DBUsername,
+                password = DBPassword,
+                db = DBDatabaseName
+            )
 
-        # Create Database Cursor #
-        self.LoggerCursor = self.DatabaseConnection.cursor()
-        # TODO: (maybe) log successful initialization
+            # Create Database Cursor #
+            self.LoggerCursor = self.DatabaseConnection.cursor()
+        except Exception as Error:
+            self.Logger.Log('Failed to initialize Database Log Transmission System: ' + str(Error), 10)
+            raise
+
+        self.Logger.Log('Database Log Transmission System Initialized Successfully', 4)
 
 
     def ConfigureOpsBeforeCommit(self, SystemConfiguration:dict): # Load DB commit batch size from config #
