@@ -248,7 +248,7 @@ class TelemetryAPI(): # Exposes Telemetry Functions To The Leader #
         return Info
 
 
-    def GetPartitonFileSystemType(self, NodeName): # Gets Node Info #
+    def GetPartitionFileSystemType(self, NodeName): # Gets Node Info #
 
         # Get The Info #
         NodeJSON = self.LeaderAttributes.Info[NodeName]
@@ -256,6 +256,11 @@ class TelemetryAPI(): # Exposes Telemetry Functions To The Leader #
 
         # Return The Information #
         return Info
+
+    def GetPartitonFileSystemType(self, NodeName): # Gets Node Info #
+
+        # Preserve the old misspelled API name for existing callers.
+        return self.GetPartitionFileSystemType(NodeName)
 
 
     def GetPartitionTotalBytes(self, NodeName): # Gets Node Info #
