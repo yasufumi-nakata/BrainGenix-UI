@@ -58,7 +58,7 @@ if __name__ == '__main__':
         )
 
     except Exception as e:
-        print('Error: Key and Certificate could not be loaded' + e)
+        print(f'Error: Key and Certificate could not be loaded: {e}')
 
     # Shutdown Server #
     os._exit(0)
@@ -155,7 +155,7 @@ async def root(RequestJSON: Request):
             return {'Name':'Error', 'Content':'ScopeError: No Valid Server Is Available To Handle Your Request With The Given Scope. Valid Scopes Are "NES", "ERS", "STS".'}
 
     except Exception as e:
-        print('Error: ' + e)
+        print(f'Error: {e}')
 
 # Add a new user #
 @API.post('/AddUser')
