@@ -72,14 +72,24 @@ def CanAccessZookeeper(ZKConfigDict:dict, Logger:object): # Runs Some Diagnostic
     # Check If Address Valid Numbers #
     Logger.Log('Checking If Address Has Valid Numbers In Octets', 1)
     for Octet in Octets:
-        if (int(Octet) > 255) or (int(Octet) < 0):
+        try:
+            OctetNumber = int(Octet)
+        except ValueError:
+            Logger.Log('Invalid Non-Numeric Zookeeper Host Address Octet! Check Configuration File.', 3)
+            return False
+        if (OctetNumber > 255) or (OctetNumber < 0):
             Logger.Log('Invalid Number In Zookeeper Host Address Octet! Check Configuration File.', 3)
             return False
     Logger.Log('Octets Valid, Advancing To Next Test', 1)
 
     # Check If Port In Allowed Range #
     Logger.Log('Checking If Port In Allowed Range (0-65535)', 1)
-    if not ((int(Port) > 0) and (int(Port) < 65536)):
+    try:
+        PortNumber = int(Port)
+    except ValueError:
+        Logger.Log('Invalid Non-Numeric Zookeeper Port! Check Configuration File.', 3)
+        return False
+    if not ((PortNumber > 0) and (PortNumber < 65536)):
         Logger.Log('Port Outside Allwed Range, Please Check Configuration File')
         return False
     Logger.Log('Port Within Valid Range, Advancing To Next Test')
@@ -96,7 +106,7 @@ def CanAccessZookeeper(ZKConfigDict:dict, Logger:object): # Runs Some Diagnostic
 
     # Check If Host Has Port Open #
     Logger.Log('Checking If Remote Host Has Port Open')
-    if not IsPortOpen(Address, Port):
+    if not IsPortOpen(Address, PortNumber):
         Logger.Log(f'Address {Address} Does Not Have Port {Port} Open, Check Configuration Or Zookeeper Service!', 3)
         return False
     else:
